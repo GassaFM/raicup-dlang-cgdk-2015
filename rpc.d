@@ -34,8 +34,6 @@ public:
 		socket.setOption (SocketOptionLevel.SOCKET,
 		    SocketOption.RCVBUF, 1 << 12);
 		socket.connect (addr);
-
-		startingDirection = Direction.DirectionCount;
 	}
 
 	void writeToken (string token)
@@ -94,7 +92,7 @@ private:
 	string mapName;
 	immutable (TileType) [] [] tilesXY;
 	int [2] [] waypoints;
-	Direction startingDirection;
+	Direction startingDirection = Direction.DirectionCount;
 
 	auto read (T : const Bonus) ()
 	{
@@ -290,6 +288,7 @@ private:
 
 	auto read (T : const OilSlick) ()
 	{
+		debug (io) {writeln ("oil slick started");}
 		enforce (read !(bool));
 
 		auto id = read !(long) ();
@@ -302,6 +301,7 @@ private:
 		auto angularSpeed = read !(double) ();
 		auto radius = read !(double) ();
 		auto remainingLifetime = read !(int) ();
+		debug (io) {writeln ("oil slick finished");}
 
 		return new immutable T (id, mass, x, y, speedX, speedY,
 		    angle, angularSpeed, radius, remainingLifetime);
@@ -361,18 +361,24 @@ private:
 		auto lastTickIndex = read !(int) ();
 		auto width = read !(int) ();
 		auto height = read !(int) ();
+		debug (io) {writeln ("to player");}
 		auto players = read !(immutable (Player) []) ();
+		debug (io) {writeln ("to car");}
 		auto cars = read !(immutable (Car) []) ();
+		debug (io) {writeln ("to projectile");}
 		auto projectiles = read !(immutable (Projectile) []) ();
+		debug (io) {writeln ("to bonus");}
 		auto bonuses = read !(immutable (Bonus) []) ();
+		debug (io) {writeln ("to oilslick");}
 		auto oilSlicks = read !(immutable (OilSlick) []) ();
 		if (mapName is null)
 		{
 			mapName = read !(string) ();
 		}
-		if (tilesXY is null)
+		auto curTilesXY = read !(immutable (TileType) [] []) ();
+		if (!curTilesXY.empty)
 		{
-			tilesXY = read !(immutable (TileType) [] []) ();
+			tilesXY = curTilesXY;
 		}
 		if (waypoints is null)
 		{
@@ -439,6 +445,7 @@ private:
 
 	auto read (T : T []) ()
 	{
+		debug (io) {writeln ("array read");}
 		int len = read !(int) ();
 		enforce (len >= 0);
 
@@ -483,6 +490,7 @@ private:
 		size_t offset = 0;
 		while (offset < byteCount)
 		{
+			debug (io) {writeln ("in ", offset, " ", byteCount);}
 			offset += socket.receive (bytes[offset..bytes.length]);
 		}
 		debug (io) {writeln ("read: ", bytes);}
