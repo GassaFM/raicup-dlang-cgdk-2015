@@ -2,9 +2,9 @@ module model.direction;
 
 enum Direction : byte
 {
-	left,
-	right,
-	up,
-	down,
-	directionCount
+    left,
+    right,
+    up,
+    down,
+    directionCount
 }
