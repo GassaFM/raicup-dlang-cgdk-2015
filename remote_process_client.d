@@ -1,4 +1,4 @@
-module rpc;
+module remote_process_client;
 
 import std.bitmanip;
 import std.conv;
@@ -12,14 +12,14 @@ import model;
 
 enum MessageType : byte
 {
-	UNKNOWN_MESSAGE,
-	GAME_OVER,
-	AUTHENTICATION_TOKEN,
-	TEAM_SIZE,
-	PROTOCOL_VERSION,
-	GAME_CONTEXT,
-	PLAYER_CONTEXT,
-	MOVE_MESSAGE
+	unknownMessage,
+	gameOver,
+	authenticationToken,
+	teamSize,
+	protocolVersion,
+	gameContext,
+	playerContext,
+	moveMessage,
 }
 
 class RemoteProcessClient
@@ -38,26 +38,26 @@ public:
 
 	void writeToken (string token)
 	{
-		write (MessageType.AUTHENTICATION_TOKEN);
+		write (MessageType.authenticationToken);
 		write (token);
 	}
 
 	int readTeamSize ()
 	{
-		enforce (read !(MessageType) == MessageType.TEAM_SIZE);
+		enforce (read !(MessageType) == MessageType.teamSize);
 		return read !(int);
 	}
 	
 	void writeProtocolVersion ()
 	{
-		write (MessageType.PROTOCOL_VERSION);
+		write (MessageType.protocolVersion);
 		write !(int) (2);
 	}
 
 	auto readGameContextMessage ()
 	{
 		auto messageType = read !(MessageType) ();
-		enforce (messageType == MessageType.GAME_CONTEXT);
+		enforce (messageType == MessageType.gameContext);
 
 		return read !(immutable Game) ();
 	}
@@ -65,18 +65,18 @@ public:
 	auto readPlayerContextMessage ()
 	{
 		auto messageType = read !(MessageType) ();
-		if (messageType == MessageType.GAME_OVER)
+		if (messageType == MessageType.gameOver)
 		{
 			return null;
 		}
-		enforce (messageType == MessageType.PLAYER_CONTEXT);
+		enforce (messageType == MessageType.playerContext);
 
 		return read !(immutable PlayerContext) ();
 	}
 
 	void writeMovesMessage (Move [] moves)
 	{
-		write (MessageType.MOVE_MESSAGE);
+		write (MessageType.moveMessage);
 
 		write !(Move []) (moves);
 	}
@@ -92,7 +92,7 @@ private:
 	string mapName;
 	immutable (TileType) [] [] tilesXY;
 	int [2] [] waypoints;
-	Direction startingDirection = Direction.DirectionCount;
+	Direction startingDirection = Direction.directionCount;
 
 	auto read (T : const Bonus) ()
 	{
@@ -384,7 +384,7 @@ private:
 		{
 			waypoints = read !(int [2] []) ();
 		}
-		if (startingDirection == Direction.DirectionCount)
+		if (startingDirection == Direction.directionCount)
 		{
 			startingDirection = read !(Direction) ();
 		}

@@ -2,7 +2,7 @@ module runner;
 
 import std.stdio;
 
-import rpc;
+import remote_process_client;
 import my_strategy;
 
 import model.car;
@@ -31,43 +31,35 @@ void main (string [] args)
 	client.writeProtocolVersion ();
 	auto game = client.readGameContextMessage ();
 
-	debug (io) {writeln ("-1"); stdout.flush ();}
 	auto strategies = new MyStrategy [teamSize];
 	foreach (ref strategy; strategies)
 	{
 		strategy = new MyStrategy ();
 	}
-	debug (io) {writeln ("0"); stdout.flush ();}
 
 	while (true)
 	{
 		immutable PlayerContext playerContext =
 		    client.readPlayerContextMessage ();
-		debug (io) {writeln ("got context"); stdout.flush ();}
 		if (playerContext is null)
 		{
 			break;
 		}
 
 		auto playerCars = playerContext.cars;
-		debug (io) {writeln ("got cars"); stdout.flush ();}
 		if (playerCars is null || playerCars.length != teamSize)
 		{
 			break;
 		}
 
-		debug (io) {writeln ("1"); stdout.flush ();}
 		auto moves = new Move [teamSize];
 		foreach (carIndex, ref curMove; moves)
 		{
 			curMove = new Move ();
-			debug (io) {writeln ("2 ", carIndex); stdout.flush ();}
 			strategies[playerCars[carIndex].teammateIndex]
 			    .move (playerCars[carIndex],
 			    playerContext.world, game, curMove);
 		}
-		debug (io) {writeln ("3"); stdout.flush ();}
 		client.writeMovesMessage (moves);
 	}
-	debug (io) {writeln ("4"); stdout.flush ();}
 }
