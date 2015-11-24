@@ -32,7 +32,7 @@ abstract class Unit
 		this.angularSpeed = angularSpeed;
 	}
 
-	double GetAngleTo (double x, double y)
+	double getAngleTo (double x, double y) const
 	{
 		double absoluteAngleTo = atan2 (y - this.y, x - this.x);
 		double relativeAngleTo = absoluteAngleTo - angle;
@@ -50,20 +50,20 @@ abstract class Unit
 		return relativeAngleTo;
 	}
 
-	double GetAngleTo (Unit unit)
+	double getAngleTo (const Unit unit) const
 	{
-		return GetAngleTo (unit.x, unit.y);
+		return getAngleTo (unit.x, unit.y);
 	}
 
-	double GetDistanceTo (double x, double y)
+	double getDistanceTo (double x, double y) const
 	{
 		double xRange = x - this.x;
 		double yRange = y - this.y;
 		return sqrt (xRange * xRange + yRange * yRange);
 	}
 
-	double GetDistanceTo (Unit unit)
+	double getDistanceTo (const Unit unit) const
 	{
-		return GetDistanceTo (unit.x, unit.y);
+		return getDistanceTo (unit.x, unit.y);
 	}
 }

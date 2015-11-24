@@ -59,7 +59,7 @@ class World
 		this.startingDirection = startingDirection;
 	}
 
-	immutable (Player) GetMyPlayer ()
+	immutable (Player) getMyPlayer () const
 	{
 		foreach (player; players)
 		{
