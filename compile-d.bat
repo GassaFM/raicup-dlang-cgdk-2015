@@ -14,4 +14,4 @@ for %%i in (model\*.d) do (
     call concatenate %%i
 )
 
-dmd -O -release -inline -noboundscheck %FILES% -of%name% 2>compilation.log
+dmd -O -release -inline -noboundscheck -L/STACK:268435456 -wi -m32 %FILES% -of%name% 2>compilation.log

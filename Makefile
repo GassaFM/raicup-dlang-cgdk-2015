@@ -1,5 +1,5 @@
 DC = dmd
-DFLAGS = -O -release -inline -noboundscheck
+DFLAGS = -O -release -inline -noboundscheck -wi -m32
 LOCAL_RUNNER = java -jar local-runner.jar true false 3 result.txt true false
 
 SRC=$(wildcard *.d) $(wildcard */*.d)
